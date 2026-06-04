@@ -1,5 +1,5 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { Search, Github, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Search, Github, BookOpen, Menu, X } from "lucide-react";
 import { NAV, findGroupTitle, findItem } from "@/data/nav";
 import { cn } from "@/lib/cn";
 
@@ -13,6 +13,26 @@ export function AppShell({
   children: ReactNode;
 }) {
   const [query, setQuery] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // 选中菜单后关闭移动端抽屉
+  const navigate = (id: string) => {
+    onNavigate(id);
+    setMobileOpen(false);
+  };
+
+  // 抽屉打开时锁定背景滚动，Esc 关闭
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileOpen]);
 
   const filteredNav = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -28,10 +48,24 @@ export function AppShell({
 
   return (
     <div className="app-shell">
-      <aside className="docs-sidebar">
+      {/* 移动端抽屉遮罩 */}
+      <div
+        className={cn("sidebar-backdrop", mobileOpen && "show")}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden
+      />
+
+      <aside className={cn("docs-sidebar", mobileOpen && "mobile-open")}>
+        <button
+          className="btn btn-ghost btn-icon btn-sm sidebar-close-btn"
+          onClick={() => setMobileOpen(false)}
+          aria-label="关闭菜单"
+        >
+          <X className="icon-md" aria-hidden />
+        </button>
         <button
           className="docs-brand"
-          onClick={() => onNavigate("overview")}
+          onClick={() => navigate("overview")}
           style={{ border: "none", background: "transparent", width: "100%" }}
         >
           <span className="docs-brand-mark">东</span>
@@ -62,7 +96,7 @@ export function AppShell({
                   <button
                     key={it.id}
                     className={cn("nav-link", current === it.id && "active")}
-                    onClick={() => onNavigate(it.id)}
+                    onClick={() => navigate(it.id)}
                     aria-current={current === it.id ? "page" : undefined}
                   >
                     <Icon size={16} aria-hidden />
@@ -78,7 +112,15 @@ export function AppShell({
       <div className="docs-main">
         <header className="docs-topbar">
           <div className="docs-breadcrumb">
-            <BookOpen className="icon-sm" aria-hidden />
+            <button
+              className="btn btn-ghost btn-icon btn-sm mobile-menu-btn"
+              onClick={() => setMobileOpen(true)}
+              aria-label="打开菜单"
+              aria-expanded={mobileOpen}
+            >
+              <Menu className="icon-md" aria-hidden />
+            </button>
+            <BookOpen className="icon-sm topbar-book" aria-hidden />
             {groupTitle && <span>{groupTitle}</span>}
             {item && (
               <>

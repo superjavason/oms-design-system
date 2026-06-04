@@ -129,6 +129,15 @@
 }
 
 /* ---------- 主内容区 ---------- */
+/* 移动端控件：桌面端默认隐藏 */
+.mobile-menu-btn,
+.sidebar-close-btn {
+  display: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
+
 .docs-main {
   flex: 1;
   min-width: 0;
@@ -701,9 +710,55 @@
 
 /* 响应式 */
 @media (max-width: 1024px) {
+  /* 侧边栏改为滑入抽屉 */
   .docs-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    width: min(300px, 84vw);
+    height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform var(--duration-slow) var(--ease-standard);
+    box-shadow: var(--shadow-lg);
+    padding-top: var(--space-6);
+  }
+  .docs-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* 遮罩 */
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: oklch(0.15 0 0 / 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-standard);
+  }
+  .sidebar-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 抽屉内关闭按钮 + 顶栏汉堡按钮 */
+  .sidebar-close-btn {
+    display: inline-flex;
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 1;
+  }
+  .mobile-menu-btn {
+    display: inline-flex;
+    margin-right: var(--space-1);
+  }
+  .topbar-book {
     display: none;
   }
+
   .feature-grid,
   .hero-stats {
     grid-template-columns: repeat(2, 1fr);
@@ -715,6 +770,9 @@
   }
   .docs-topbar {
     padding: 0 var(--space-4);
+  }
+  .docs-topbar-actions {
+    display: none;
   }
   .dodont,
   .feature-grid,
