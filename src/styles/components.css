@@ -224,9 +224,27 @@ button {
   color: var(--color-fg-muted);
   cursor: pointer;
   white-space: nowrap;
+  /* 重置原生 button 外观 */
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  line-height: var(--line-height-tight);
+  /* 紧凑 hover 热区，向右光学对齐卡片边缘 */
+  padding: var(--space-1) var(--space-2);
+  margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2));
+  border-radius: var(--radius-full);
+  transition: color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
 }
 .card-action:hover {
   color: var(--color-brand);
+  background: var(--color-brand-bg);
+}
+.card-action svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.card-action:hover svg {
+  transform: translateX(2px);
 }
 .card-content {
   padding: var(--space-4) var(--space-5);
