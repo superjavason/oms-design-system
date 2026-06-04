@@ -1,7 +1,17 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Search, Github, BookOpen, Menu, X } from "lucide-react";
+import {
+  Search,
+  Github,
+  BookOpen,
+  Menu,
+  X,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from "lucide-react";
 import { NAV, findGroupTitle, findItem } from "@/data/nav";
 import { cn } from "@/lib/cn";
+
+const COLLAPSE_KEY = "oms-sidebar-collapsed";
 
 export function AppShell({
   current,
@@ -14,6 +24,18 @@ export function AppShell({
 }) {
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  // PC 端侧边栏收拢态（持久化到 localStorage）
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(COLLAPSE_KEY) === "1";
+  });
+
+  const toggleCollapsed = () =>
+    setCollapsed((prev) => {
+      const next = !prev;
+      window.localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
+      return next;
+    });
 
   // 选中菜单后关闭移动端抽屉
   const navigate = (id: string) => {
@@ -47,7 +69,7 @@ export function AppShell({
   const item = findItem(current);
 
   return (
-    <div className="app-shell">
+    <div className={cn("app-shell", collapsed && "sidebar-collapsed")}>
       {/* 移动端抽屉遮罩 */}
       <div
         className={cn("sidebar-backdrop", mobileOpen && "show")}
@@ -67,6 +89,7 @@ export function AppShell({
           className="docs-brand"
           onClick={() => navigate("overview")}
           style={{ border: "none", background: "transparent", width: "100%" }}
+          title={collapsed ? "东鹏 OMS · 设计系统 v2.1" : undefined}
         >
           <span className="docs-brand-mark">东</span>
           <span className="docs-brand-text" style={{ textAlign: "left" }}>
@@ -76,13 +99,23 @@ export function AppShell({
         </button>
 
         <div className="docs-search">
-          <Search className="icon-sm" aria-hidden />
+          {/* 收拢态：搜索框塌缩为图标按钮，点击即展开侧边栏 */}
+          <button
+            type="button"
+            className="docs-search-icon"
+            onClick={() => collapsed && toggleCollapsed()}
+            aria-label="展开菜单以搜索"
+            tabIndex={collapsed ? 0 : -1}
+          >
+            <Search className="icon-sm" aria-hidden />
+          </button>
           <input
             className="input"
             placeholder="搜索组件…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-label="搜索组件"
+            tabIndex={collapsed ? -1 : 0}
           />
         </div>
 
@@ -98,9 +131,10 @@ export function AppShell({
                     className={cn("nav-link", current === it.id && "active")}
                     onClick={() => navigate(it.id)}
                     aria-current={current === it.id ? "page" : undefined}
+                    title={collapsed ? it.label : undefined}
                   >
                     <Icon size={16} aria-hidden />
-                    {it.label}
+                    <span className="nav-label">{it.label}</span>
                   </button>
                 );
               })}
@@ -119,6 +153,20 @@ export function AppShell({
               aria-expanded={mobileOpen}
             >
               <Menu className="icon-md" aria-hidden />
+            </button>
+            {/* PC 端：侧边栏收拢 / 展开 */}
+            <button
+              className="btn btn-ghost btn-icon btn-sm sidebar-toggle-btn"
+              onClick={toggleCollapsed}
+              aria-label={collapsed ? "展开侧边栏" : "收拢侧边栏"}
+              aria-expanded={!collapsed}
+              title={collapsed ? "展开侧边栏" : "收拢侧边栏"}
+            >
+              {collapsed ? (
+                <PanelLeftOpen className="icon-md" aria-hidden />
+              ) : (
+                <PanelLeftClose className="icon-md" aria-hidden />
+              )}
             </button>
             <BookOpen className="icon-sm topbar-book" aria-hidden />
             {groupTitle && <span>{groupTitle}</span>}
