@@ -168,6 +168,10 @@
   backdrop-filter: saturate(180%) blur(8px);
   border-bottom: 1px solid var(--color-border);
 }
+/* 深色模式：半透明背景跟随深色基底，避免面包屑文字与背景相近 */
+.dark .docs-topbar {
+  background: oklch(0.18 0 0 / 0.8);
+}
 .docs-breadcrumb {
   display: flex;
   align-items: center;
