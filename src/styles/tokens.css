@@ -5,6 +5,9 @@
  * ============================================================= */
 
 :root {
+  /* 原生控件配色（滚动条 / 表单 / 画布背景）跟随主题 */
+  color-scheme: light;
+
   /* -----------------------------------------------------------
    * 3.1 颜色 Color
    * --------------------------------------------------------- */
@@ -134,4 +137,55 @@
    * --------------------------------------------------------- */
   --topbar-h: 48px;
   --sidebar-w: 232px;
+}
+
+/* =============================================================
+ * 深色模式覆盖 Dark Mode —— 仅覆盖 3.1 颜色令牌与阴影
+ * 由 <html class="dark"> 激活。下游样式均引用 var(--token)，
+ * 故无需改动 components.css / showcase.css / 任何页面。
+ * shadcn 别名变量（--background / --primary …）引用 --color-*，自动继承。
+ * ============================================================= */
+.dark {
+  /* 原生控件配色跟随深色主题 */
+  color-scheme: dark;
+
+  /* 3.1.1 品牌色 —— 深底上提亮以保证对比度 */
+  --color-brand: oklch(0.62 0.23 22);
+  --color-brand-hover: oklch(0.68 0.22 22);
+  --color-brand-light: oklch(0.32 0.09 22);
+  --color-brand-bg: oklch(0.26 0.05 22);
+
+  /* 3.1.2 功能色 —— 主色提亮，-light/-bg 转为低亮度深底 */
+  --color-success: oklch(0.65 0.15 150);
+  --color-success-light: oklch(0.32 0.08 150);
+  --color-success-bg: oklch(0.26 0.04 150);
+
+  --color-warning: oklch(0.72 0.14 80);
+  --color-warning-light: oklch(0.34 0.08 80);
+  --color-warning-bg: oklch(0.27 0.04 80);
+
+  --color-danger: oklch(0.65 0.2 25);
+  --color-danger-light: oklch(0.32 0.08 25);
+  --color-danger-bg: oklch(0.26 0.04 25);
+
+  --color-info: oklch(0.68 0.16 250);
+  --color-info-light: oklch(0.32 0.08 250);
+  --color-info-bg: oklch(0.26 0.04 250);
+
+  /* 3.1.3 中性色 —— 反相 */
+  --color-bg: oklch(0.18 0 0);
+  --color-bg-muted: oklch(0.22 0 0);
+  --color-bg-hover: oklch(0.26 0 0);
+  --color-fg: oklch(0.95 0 0);
+  --color-fg-muted: oklch(0.65 0 0);
+  --color-fg-subtle: oklch(0.5 0 0);
+  --color-border: oklch(0.3 0 0);
+  --color-border-hover: oklch(0.4 0 0);
+
+  /* 3.5 阴影 —— 深底上加深 alpha 以呈现高度 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-focus: 0 0 0 3px oklch(0.62 0.23 22 / 20%);
 }

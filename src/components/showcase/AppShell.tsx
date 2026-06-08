@@ -7,9 +7,12 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { NAV, findGroupTitle, findItem } from "@/data/nav";
 import { cn } from "@/lib/cn";
+import { useTheme } from "@/lib/useTheme";
 
 const COLLAPSE_KEY = "oms-sidebar-collapsed";
 
@@ -23,6 +26,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const [query, setQuery] = useState("");
+  const { theme, toggle: toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   // PC 端侧边栏收拢态（持久化到 localStorage）
   const [collapsed, setCollapsed] = useState(() => {
@@ -178,6 +182,18 @@ export function AppShell({
             )}
           </div>
           <div className="docs-topbar-actions">
+            <button
+              className="btn btn-ghost btn-icon btn-sm"
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
+              title={theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
+            >
+              {theme === "dark" ? (
+                <Sun className="icon-md" aria-hidden />
+              ) : (
+                <Moon className="icon-md" aria-hidden />
+              )}
+            </button>
             <a
               className="btn btn-ghost btn-sm"
               href="https://ui.shadcn.com/"
